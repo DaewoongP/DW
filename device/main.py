@@ -13,18 +13,12 @@ parser.add_argument('-o', '--output-url', default='http://localhost:8090/feed1.f
                     metavar='PATH', help='url used to set up rtsp streaming')
 
 
-def execute_ffmpeg():
+def execute_ffmpeg(output_url):
     command = ['ffmpeg',
                '-f', 'video4linux2',
                '-i', '/dev/video0',
-               '-vcodec', 'libx264',
-               '-s', '640x480',  # size of one frame
-               '-r', '30',  # frames per second
-               '-biv', '150k',  # bit per rate
-               '-bufsize', '40'  # buffer size
-               '-an',  # Tells FFMPEG not to expect any audio
-               'test.mp4']
-
+               output_url]
+    print(command)
     pipe = sp.Popen(command, stdin=sp.PIPE, stderr=sp.PIPE)
 
 
@@ -48,9 +42,11 @@ def main():
     # Instantiate ptz module
 
     # Streaming
-    execute_ffmpeg()
+    execute_ffmpeg(args.output_url)
 
+    # Loop
     client.loop_forever()
+
 
 if __name__ == '__main__':
     main()
